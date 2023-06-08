@@ -20,7 +20,7 @@ found in the LICENSE file.
 
 void welcome(){
 	printf("leveldb-import - Import existing leveldb into ssdb\n");
-	printf("Copyright (c) 2013-2015 ssdb.io\n");
+	printf("Copyright (c) 2013-2023 ssdb.io\n");
 	printf("\n");
 }
 

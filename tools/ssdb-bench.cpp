@@ -32,7 +32,7 @@ std::vector<Link *> *free_links;
 
 void welcome(){
 	printf("ssdb-bench - SSDB benchmark tool, %s\n", SSDB_VERSION);
-	printf("Copyright (c) 2013-2015 ssdb.io\n");
+	printf("Copyright (c) 2013-2023 ssdb.io\n");
 	printf("\n");
 }
 
