@@ -6,8 +6,8 @@ RUN apk update && \
 
 
 COPY . /usr/src/ssdb/
-RUN make  -C /usr/src/ssdb && \
-  make -C /usr/src/ssdb install
+RUN make -j -C /usr/src/ssdb && \
+  make -j -C /usr/src/ssdb install
 
 
 FROM alpine:3
