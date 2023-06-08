@@ -14,7 +14,7 @@ ssdb::Client *dst = NULL;
 
 void welcome(){
 	printf("ssdb-migrate - SSDB server migration tool\n");
-	printf("Copyright (c) 2012-2015 ssdb.io\n");
+	printf("Copyright (c) 2012-2023 ssdb.io\n");
 	printf("\n");
 }
 

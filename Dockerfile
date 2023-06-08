@@ -1,31 +1,30 @@
-FROM ubuntu
-MAINTAINER wendal "wendal1985@gmail.com"
+FROM alpine:3 as builder
 
-# Set the env variable DEBIAN_FRONTEND to noninteractive
-ENV DEBIAN_FRONTEND noninteractive
+RUN apk update && \
+    apk add gcc  && \
+    apk add --virtual .build-deps autoconf make g++ git
 
-RUN apt-get update && \
-  apt-get install -y python2.7 && \
-  apt-get install -y --force-yes git make gcc g++ autoconf && apt-get clean && \
-  git clone --depth 1 https://github.com/ideawu/ssdb.git ssdb && \
-  cd ssdb && make && make install && cp ssdb-server /usr/bin && \
-  apt-get remove -y --force-yes git make gcc g++ autoconf && \
-  apt-get autoremove -y && \
-  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-  cp ssdb.conf /etc && cd .. && yes | rm -r ssdb
 
-RUN mkdir -p /var/lib/ssdb && \
-  sed \
-    -e 's@home.*@home /var/lib@' \
-    -e 's/loglevel.*/loglevel info/' \
-    -e 's@work_dir = .*@work_dir = /var/lib/ssdb@' \
-    -e 's@pidfile = .*@pidfile = /run/ssdb.pid@' \
-    -e 's@level:.*@level: info@' \
+COPY . /usr/src/ssdb/
+RUN make  -C /usr/src/ssdb && \
+  make -C /usr/src/ssdb install
+
+
+FROM alpine:3
+RUN  apk add gcc
+COPY --from=builder  /usr/local/ssdb /usr/local/ssdb
+
+RUN sed \
     -e 's@ip:.*@ip: 0.0.0.0@' \
-    -i /etc/ssdb.conf
+    -e 's@cache_size:.*@cache_size: 4096@' \
+    -e 's@write_buffer_size:.*@write_buffer_size: 512@' \
+    -e 's@level:.*@level: info@' \
+    -e 's@output:.*@output:@' \
+    -i /usr/local/ssdb/ssdb.conf
 
-
-ENV TZ Asia/Shanghai
 EXPOSE 8888
-VOLUME /var/lib/ssdb
-ENTRYPOINT /usr/bin/ssdb-server /etc/ssdb.conf
+VOLUME /usr/local/ssdb/var/data
+VOLUME /usr/local/ssdb/var/meta
+WORKDIR /usr/local/ssdb/
+
+ENTRYPOINT rm -f /usr/local/ssdb/var/ssdb.pid && /usr/local/ssdb/ssdb-server /usr/local/ssdb/ssdb.conf
