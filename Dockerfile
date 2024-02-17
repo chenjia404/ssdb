@@ -23,8 +23,7 @@ RUN sed \
     -i /usr/local/ssdb/ssdb.conf
 
 EXPOSE 8888
-VOLUME /usr/local/ssdb/var/data
-VOLUME /usr/local/ssdb/var/meta
+VOLUME /usr/local/ssdb/var/
 WORKDIR /usr/local/ssdb/
 
 ENTRYPOINT rm -f /usr/local/ssdb/var/ssdb.pid && /usr/local/ssdb/ssdb-server /usr/local/ssdb/ssdb.conf
